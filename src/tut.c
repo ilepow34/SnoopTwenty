@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include <stdio.h>
+#include <stdlib.h>
   
 static Window *s_main_window;
 static TextLayer *s_time_layer;
@@ -13,10 +14,15 @@ static void update_time(){
   struct tm *tick_time = localtime(&temp);
   static char buffer[] = "00:00";
   if(clock_is_24h_style())
-      strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
+    strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
   else
     strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, buffer);
+  
+  if (!strcmp(buffer, "4:20") || !strcmp(buffer, "16:20"))
+    window_stack_push(s_image_window, true);
+  if (!strcmp(buffer, "4:21") || !strcmp(buffer, "16:21"))
+    window_stack_remove(s_image_window, true);
 }
 
 static void update_420(){
@@ -24,19 +30,22 @@ static void update_420(){
   time_t current_time = time(NULL);
   time_t timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
   time_t timestamp_1620 = clock_to_timestamp(TODAY, 16, 20);
-  int timestamp1 = timestamp_420;
-  int timestamp2 = timestamp_1620;
-  int timestamp3 = current_time;
   if(timestamp_420 - current_time > 86400)
     timestamp_420 -= 604800;
-  if ((timestamp_420 - current_time) < 43200)
+  if ((timestamp_420 - current_time) <= 43200)
     difference = timestamp_420 - current_time;
   else
     difference = timestamp_1620 - current_time;
   difference = difference / 60;
   static char time_to_420[] = "00 hours and\n00 minutes\nuntil 4:20";
-  //snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d\n%d", timestamp1 - timestamp3, timestamp2 - timestamp3);
-  snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
+  if (difference / 60 == 1 && difference % 60 == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
+  else if (difference / 60 == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
+  else if (difference % 60 == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
+  else
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
   text_layer_set_text(s_420_layer, time_to_420);
 }
 
