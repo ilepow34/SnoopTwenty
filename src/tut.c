@@ -19,9 +19,9 @@ static void update_time(){
     strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, buffer);
   
-  if (!strcmp(buffer, "4:20") || !strcmp(buffer, "16:20"))
+  if (!strcmp(buffer, "04:20") || !strcmp(buffer, "16:20"))
     window_stack_push(s_image_window, true);
-  if (!strcmp(buffer, "4:21") || !strcmp(buffer, "16:21"))
+  if (!strcmp(buffer, "04:21") || !strcmp(buffer, "16:21"))
     window_stack_remove(s_image_window, true);
 }
 
