@@ -11,7 +11,7 @@ static BitmapLayer *s_bitmap_layer;
 
 static void update_time(){
   time_t temp = time(NULL);
-  struct tm *tick_time = localtime(&temp);
+  struct tm *tick_time = localtime(&temp); //I think the people at Pebble made this line intentionally punny in the tutorial. "Local time and temp". 
   static char buffer[] = "00:00";
   if(clock_is_24h_style())
     strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
@@ -26,26 +26,39 @@ static void update_time(){
 }
 
 static void update_420(){
-  int difference;
+  time_t difference;
+  //int difference_minutes = 0;
+  //int difference_hours = 0;
   time_t current_time = time(NULL);
+  //struct tm *local_time = localtime(&current_time);
   time_t timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
-  time_t timestamp_1620 = clock_to_timestamp(TODAY, 16, 20);
-  if(timestamp_420 - current_time > 86400)
-    timestamp_420 -= 604800;
-  if ((timestamp_420 - current_time) <= 43200)
-    difference = timestamp_420 - current_time;
-  else
-    difference = timestamp_1620 - current_time;
-  difference = difference / 60;
+  if (timestamp_420 - current_time > 86400)
+    timestamp_420 = clock_to_timestamp(TODAY, 16, 20);
+  if (timestamp_420 - current_time > 86400) {
+    timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
+    timestamp_420 -= 518400; //this is necessary because TODAY will get the next instance of the current weekday if it is after 4:20. This makes it the timestamp for 4:20 tomorrow.
+  }
+  //struct tm *local_420 = localtime(&timestamp_420);
+  //difference_minutes = local_420->tm_min - local_time->tm_min;
+  //if (difference_minutes < 0) {
+  //  difference_hours -= 1;
+  //  difference_minutes += 60;
+  //}
+  //difference_hours += local_420->tm_hour - local_time->tm_hour;
+  //if (difference_hours < 0)
+  //  difference_hours += 24;
+  difference = timestamp_420 - current_time;
+  struct tm *local_difference = localtime(&difference);
   static char time_to_420[] = "00 hours and\n00 minutes\nuntil 4:20";
-  if (difference / 60 == 1 && difference % 60 == 1)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
-  else if (difference / 60 == 1)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
-  else if (difference % 60 == 1)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
+  //snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", local_420->tm_hour, local_420->tm_min);
+  if (local_difference->tm_hour == 1 && local_difference->tm_min == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
+  else if (local_difference->tm_hour == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
+  else if (local_difference->tm_min)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
   else
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
   text_layer_set_text(s_420_layer, time_to_420);
 }
 
