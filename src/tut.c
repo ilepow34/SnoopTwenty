@@ -26,11 +26,8 @@ static void update_time(){
 }
 
 static void update_420(){
-  time_t difference;
-  //int difference_minutes = 0;
-  //int difference_hours = 0;
+  int difference;
   time_t current_time = time(NULL);
-  //struct tm *local_time = localtime(&current_time);
   time_t timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
   if (timestamp_420 - current_time > 86400)
     timestamp_420 = clock_to_timestamp(TODAY, 16, 20);
@@ -38,27 +35,16 @@ static void update_420(){
     timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
     timestamp_420 -= 518400; //this is necessary because TODAY will get the next instance of the current weekday if it is after 4:20. This makes it the timestamp for 4:20 tomorrow.
   }
-  //struct tm *local_420 = localtime(&timestamp_420);
-  //difference_minutes = local_420->tm_min - local_time->tm_min;
-  //if (difference_minutes < 0) {
-  //  difference_hours -= 1;
-  //  difference_minutes += 60;
-  //}
-  //difference_hours += local_420->tm_hour - local_time->tm_hour;
-  //if (difference_hours < 0)
-  //  difference_hours += 24;
   difference = timestamp_420 - current_time;
-  struct tm *local_difference = localtime(&difference);
   static char time_to_420[] = "00 hours and\n00 minutes\nuntil 4:20";
-  //snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", local_420->tm_hour, local_420->tm_min);
-  if (local_difference->tm_hour == 1 && local_difference->tm_min == 1)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
-  else if (local_difference->tm_hour == 1)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
-  else if (local_difference->tm_min)
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
+  if (difference / 60 == 1 && difference % 60 == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
+  else if (difference / 60 == 1)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
+  else if (difference % 60)
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
   else
-    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", local_difference->tm_hour, local_difference->tm_min);
+    snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
   text_layer_set_text(s_420_layer, time_to_420);
 }
 
@@ -81,7 +67,6 @@ static void main_window_load(Window *window){
   text_layer_set_text_alignment(s_420_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_420_layer));
-  window_set_fullscreen(window, true);
 }
 
 static void main_window_unload(Window *window){

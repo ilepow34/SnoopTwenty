@@ -15,10 +15,13 @@
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "Snoop Twenty",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "192a5969-7c14-4314-9d57-bbfed3a56070",
-    "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
