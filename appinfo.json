@@ -7,7 +7,13 @@
     "longName": "Snoop Twenty",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/605108-snoopdogg_wideweb__470x338_0 - Copy.png",
+                "name": "SNOOP",
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "2",
     "shortName": "Snoop Twenty",
