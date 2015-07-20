@@ -36,6 +36,7 @@ static void update_420(){
     timestamp_420 -= 518400; //this is necessary because TODAY will get the next instance of the current weekday if it is after 4:20. This makes it the timestamp for 4:20 tomorrow.
   }
   difference = timestamp_420 - current_time;
+  difference = difference / 60;
   static char time_to_420[] = "00 hours and\n00 minutes\nuntil 4:20";
   if (difference / 60 == 1 && difference % 60 == 1)
     snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
