@@ -29,9 +29,9 @@ static void update_420(){
   int difference;
   time_t current_time = time(NULL);
   time_t timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
-  if (timestamp_420 - current_time > 86400)
+  if (timestamp_420 - current_time > 43200)
     timestamp_420 = clock_to_timestamp(TODAY, 16, 20);
-  if (timestamp_420 - current_time > 86400) {
+  if (timestamp_420 - current_time > 43200) {
     timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
     timestamp_420 -= 518400; //this is necessary because TODAY will get the next instance of the current weekday if it is after 4:20. This makes it the timestamp for 4:20 tomorrow.
   }
