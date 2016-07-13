@@ -1,0 +1,34 @@
+{
+    "author": "Isaac Lepow",
+    "dependencies": {},
+    "keywords": [],
+    "name": "snoop-twenty",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "Snoop Twenty",
+        "enableMultiJS": false,
+        "messageKeys": {},
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/snoop-bw.png",
+                    "name": "SNOOP",
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt"
+        ],
+        "uuid": "192a5969-7c14-4314-9d57-bbfed3a56070",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.3.0"
+}

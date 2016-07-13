@@ -13,12 +13,14 @@ static void update_time(){
   time_t temp = time(NULL);
   struct tm *tick_time = localtime(&temp); //I think the people at Pebble made this line intentionally punny in the tutorial. "Local time and temp". 
   static char buffer[] = "00:00";
+    //set the time according to the selected clock style
   if(clock_is_24h_style())
     strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
   else
     strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, buffer);
   
+    //push the picture when it's that time, remove it when it isn't
   if (!strcmp(buffer, "04:20") || !strcmp(buffer, "16:20"))
     window_stack_push(s_image_window, true);
   if (!strcmp(buffer, "04:21") || !strcmp(buffer, "16:21"))
@@ -29,20 +31,23 @@ static void update_420(){
   int difference;
   time_t current_time = time(NULL);
   time_t timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
+    //if 4:20 is more than 12 hours away, check when 16:20 is
   if (timestamp_420 - current_time > 43200)
     timestamp_420 = clock_to_timestamp(TODAY, 16, 20);
+    //if that's still more than 12 hours away, then try 4:20 tomorrow
   if (timestamp_420 - current_time > 43200) {
     timestamp_420 = clock_to_timestamp(TODAY, 4, 20);
     timestamp_420 -= 518400; //this is necessary because TODAY will get the next instance of the current weekday if it is after 4:20. This makes it the timestamp for 4:20 tomorrow.
   }
   difference = timestamp_420 - current_time;
-  difference = difference / 60;
+  difference = difference / 60; //difference in minutes
+    //decide how to correctly display the text (hour/hours and minute/minutes)
   static char time_to_420[] = "00 hours and\n00 minutes\nuntil 4:20";
   if (difference / 60 == 1 && difference % 60 == 1)
     snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
   else if (difference / 60 == 1)
     snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hour and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
-  else if (difference % 60)
+  else if (difference % 60 == 1)
     snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minute\nuntil 4:20", difference / 60, difference % 60);
   else
     snprintf(time_to_420, sizeof("00 hours and\n00 minutes\nuntil 4:20"), "%d hours and\n%d minutes\nuntil 4:20", difference / 60, difference % 60);
